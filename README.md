@@ -28,7 +28,7 @@ names.txt can be any text file, the only condition is that it only contain full 
 ```
 Foo Bar
 John Smith
-Jenny Weasely
+Ginny Weasely
 ```
 
 There NEEDs to be a file called creds.txt that contains your husky id and your husky password, separated each by a newline. Like so:
