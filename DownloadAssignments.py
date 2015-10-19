@@ -7,6 +7,7 @@ except ImportError:
     from itertools import izip_longest as zip_longest
 from time import sleep, strftime
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import (UnexpectedTagNameException,
                                        WebDriverException,
                                        NoSuchElementException)
@@ -48,7 +49,10 @@ def login(username, password):
     Using the given username and password, logs into MyNEU through a
     selenium driver (firefox). Returns the driver object
     """
-    driver = webdriver.Chrome()
+    opts = Options()
+    opts.add_argument("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36")
+
+    driver = webdriver.Chrome(chrome_options=opts)
     # Go to the login page
     login_page = driver.get(LOGIN_PAGE)
 
