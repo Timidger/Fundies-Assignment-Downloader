@@ -69,6 +69,9 @@ def login(username, password):
     button = driver.find_element_by_class_name("btn-submit")
     button.click()
 
+
+    # Also change the size so it all works fine
+    driver.set_window_size(1280, 800)
     # Return the driver so we can do more with it
     return driver
 
@@ -100,8 +103,9 @@ def navigate_to_jump_to(driver):
     table = get_table(driver)
     # Need to move the mouse
     action = webdriver.ActionChains(driver)
+    # Get the table
     # Get the cell (second cause shenanigans)
-    cell = driver.find_element_by_id("cell_1_6")
+    cell = table.find_element_by_id("cell_1_6")
     # Hover over the cell so we can find that drop-down menu
     action.move_to_element(cell)
     action.perform()
@@ -113,7 +117,7 @@ def navigate_to_jump_to(driver):
 def get_table(driver):
     """Gets the main grader table, assumes we are on the grade center page"""
     assert "Grade Center" in driver.title, "Not on the main grade center page for CS2501 Lab!"
-    return driver.find_elements_by_class_name("gbtable")
+    return driver.find_element_by_id("table1")
 
 
 def find_user_with_ps(driver, full_name, ps_num):
