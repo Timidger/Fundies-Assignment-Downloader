@@ -154,8 +154,14 @@ def find_user_with_ps(driver, full_name, ps_num):
 def download_hw(driver):
     """Assumes we are on a page that find_user_with_ps woul
     navigate to for you"""
+    driver.find_element_by_css_selector("a.genericButton.button-4").click()
+    #grid = driver.find_element_by_class_name("gb_gridCell_inner clearfix")
+    #grid.find_element_by_class_name("genericButton button-4").click()
+    sleep(2)
+    driver.find_element_by_id("downloadPanelButton").click()
+
     # What a horrible one-liner, I'm so sorry
-    driver.find_element_by_class_name("vtbegenerated").find_element_by_tag_name("a").click()
+    #driver.find_element_by_class_name("vtbegenerated").find_element_by_tag_name("a").click()
 
 def test():
     username, password = get_login_credentials("creds.txt")
@@ -222,12 +228,13 @@ def main():
             try:
                 download_hw(driver)
             # Yeah, yeah bad practice
-            except Exception:
+            except Exception as e:
                 fail("Couldn't find {}'s homework!".format(name))
                 FAILURES += 1
             else:
                 success("Downloaded {}'s homework".format(name))
             sleep(1)
+            driver.back()
         print(("Done! Processed \033[94m{} \033[0musers, "
                "with \033[91m{} \033[0mfailures").format(TOTAL_USERS,
                    FAILURES))
