@@ -5,7 +5,7 @@ try:
     from itertools import zip_longest
 except ImportError:
     from itertools import izip_longest as zip_longest
-from time import sleep, strftime
+from time import sleep, strftime, time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import (UnexpectedTagNameException,
@@ -92,7 +92,7 @@ def navigate_to_grade_page(driver):
     except NoSuchElementException as e:
         # Open it
         driver.find_element_by_partial_link_text("Grade Center").click()
-        sleep(1)
+        sleep(3)
         link = driver.find_element_by_link_text(GRADE_CENTER_TEXT)
     link.click()
 
@@ -194,6 +194,7 @@ def test():
         #driver.quit()
 
 def main():
+    cur_time = time()
     import sys
     assert len(sys.argv) == 3, (
     "Need to specify two things: file name full of names, and the problem set to fetch")
@@ -238,6 +239,7 @@ def main():
         print(("Done! Processed \033[94m{} \033[0musers, "
                "with \033[91m{} \033[0mfailures").format(TOTAL_USERS,
                    FAILURES))
+        print("{0:.2f}".format(time() - cur_time))
     finally:
         driver.quit()
 
