@@ -155,13 +155,23 @@ def download_hw(driver):
     """Assumes we are on a page that find_user_with_ps woul
     navigate to for you"""
     driver.find_element_by_css_selector("a.genericButton.button-4").click()
-    #grid = driver.find_element_by_class_name("gb_gridCell_inner clearfix")
-    #grid.find_element_by_class_name("genericButton button-4").click()
     sleep(2)
     driver.find_element_by_id("downloadPanelButton").click()
 
-    # What a horrible one-liner, I'm so sorry
-    #driver.find_element_by_class_name("vtbegenerated").find_element_by_tag_name("a").click()
+def rename_hw(driver):
+    """Rename the downloaded homework"""
+    # Get the old file name
+    original_file_name = driver.find_element_by_id("downloadPanelFileName").text
+    # Get the new file name
+    box_holding_name = driver.find_element_by_id("anonymous_element_20")
+    names = box_holding_name.find_elements_by_tag_name("span")
+    # Filter the names to get the one that has the name
+    new_file_name = filter(lambda span_tag: span_tag.text != "", names)[0].text
+    # Strip to the first space
+    new_file_name = new_file_name.partition(" ")[0]
+    os.system('mv "{0}/Downloads/{1}" "{0}/Downloads/{2}.rkt"'.format(os.path.expanduser("~"),
+        original_file_name, new_file_name))
+
 
 def test():
     username, password = get_login_credentials("creds.txt")
@@ -227,7 +237,11 @@ def main():
             sleep(5)
             # Try everything to get hw, if can't find, print and continue
             try:
+                # Actually download the hw
                 download_hw(driver)
+                # Get the old file name path, rename it properly
+                sleep(1)
+                rename_hw(driver)
             # Yeah, yeah bad practice
             except Exception as e:
                 fail("Couldn't find {}'s homework!".format(name))
