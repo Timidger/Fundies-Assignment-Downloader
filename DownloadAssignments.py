@@ -151,17 +151,15 @@ def find_user_with_ps(driver, full_name, ps_num):
     # Then hit go
     driver.find_element_by_id("jumpToButton").click()
 
+def view_attempts(driver):
+    driver.find_element_by_css_selector("a.genericButton.button-4").click()
+
 def download_hw(driver):
     """Assumes we are on a page that find_user_with_ps woul
     navigate to for you"""
-    driver.find_element_by_css_selector("a.genericButton.button-4").click()
-    sleep(2)
     driver.find_element_by_id("downloadPanelButton").click()
 
-def rename_hw(driver):
-    """Rename the downloaded homework"""
-    # Get the old file name
-    original_file_name = driver.find_element_by_id("downloadPanelFileName").text
+def get_hw_name(driver):
     # Get the new file name
     box_holding_name = driver.find_element_by_id("anonymous_element_20")
     names = box_holding_name.find_elements_by_tag_name("span")
@@ -169,8 +167,39 @@ def rename_hw(driver):
     new_file_name = filter(lambda span_tag: span_tag.text != "", names)[0].text
     # Strip to the first space
     new_file_name = new_file_name.partition(" ")[0]
+    return new_file_name
+
+def rename_hw(driver):
+    """Rename the downloaded homework"""
+    new_file_name = get_hw_name(driver)
+    # Get the old file name
+    original_file_name = driver.find_element_by_id("downloadPanelFileName").text
     os.system('mv "{0}/Downloads/{1}" "{0}/Downloads/{2}.rkt"'.format(os.path.expanduser("~"),
         original_file_name, new_file_name))
+
+def get_hw_file(hw_name):
+    """May throw file not found exception"""
+    file_path = "{}/Downloads/{}".format(os.path.expanduser("~"))
+    return open(file_path, "r")
+
+def find_score(hw_file):
+    """Gross, needs a regex"""
+    for line in hw_file.readlines():
+        # If grader comment
+        line = line.strip()
+        if line.startswith(";;>"):
+            if line.endswith(str(MAX_SCORE)):
+                # 3 Cause ignore comment
+                return int(line[3: line.find("/")])
+
+def grade_assignment(driver, hw_name, score):
+    # get grade score box
+    score_box = driver.find_element_by_id("currentAttempt_grade")
+    score_box.send_keys(str(score))
+    # Open the dialog to attach the file
+    driver.find_element_by_css_selector("span.mceIcon.mce_bb_file").click()
+    # Get the open thingie to click on now
+    driver.find_element_by_id("imagepackage_chooseLocalFile").click()
 
 
 def test():
@@ -237,11 +266,25 @@ def main():
             sleep(5)
             # Try everything to get hw, if can't find, print and continue
             try:
+                #view_attempts(driver)
+                #sleep(3)
+                # Get the homework name from the page
+                # hw_name = get_hw_name(driver)
+                # Find that file, return the open file descriptor
+                # hw_file = get_hw_file(hw_name)
+                # Find the score in the file, near tho top
+                # score = find_score(hw_file)
+                # Upload the file and the score
+                # grade_assignment(driver, hw_name, score)
+                #raw_input("Enter when done: ")
                 # Actually download the hw
+                view_attempts(driver)
+                sleep(4)
                 download_hw(driver)
                 # Get the old file name path, rename it properly
-                sleep(1)
+                sleep(2)
                 rename_hw(driver)
+                sleep(2)
             # Yeah, yeah bad practice
             except Exception as e:
                 fail("Couldn't find {}'s homework!".format(name))
@@ -255,7 +298,7 @@ def main():
                    FAILURES))
         print("{0:.2f}".format(time() - cur_time))
     finally:
-        driver.quit()
+        pass#driver.quit()
 
 if __name__ == "__main__":
     main()
