@@ -12,7 +12,7 @@ from selenium.common.exceptions import (UnexpectedTagNameException,
                                        WebDriverException,
                                        NoSuchElementException)
 
-LAB_LINK_TEXT = "CS2501 Lab for CS 2500 - All Sections - Fall 2015"
+LAB_LINK_TEXT = "CS2500 40571 Fundamentals of Computer Sci 1 SEC 01 - Summer 1 2016"
 GRADE_CENTER_TEXT = "Full Grade Center"
 LOGIN_PAGE = "https://blackboard.neu.edu"
 
